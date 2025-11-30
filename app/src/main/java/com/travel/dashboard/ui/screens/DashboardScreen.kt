@@ -15,6 +15,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.travel.dashboard.data.local.entity.Trip
 import com.travel.dashboard.ui.viewmodel.DashboardViewModel
@@ -22,6 +32,7 @@ import com.travel.dashboard.ui.viewmodel.WeatherInfo
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun DashboardScreen(
@@ -34,6 +45,13 @@ fun DashboardScreen(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = { showAddTripDialog = true }) {
+
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                // Placeholder for future implementation
+                println("FAB Clicked")
+            }) {
                 Icon(Icons.Filled.Add, contentDescription = "Add Trip")
             }
         }
@@ -193,6 +211,8 @@ fun WeatherCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
     ) {
         Column(
             modifier = Modifier
@@ -237,6 +257,9 @@ fun TripList(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(32.dp),
+                .fillMaxWidth()
+                .padding(32.dp),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Text(text = "No upcoming trips. Add one!")
@@ -266,6 +289,8 @@ fun TripItem(
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .padding(16.dp)
         ) {
             Text(
                 text = trip.title,
@@ -283,6 +308,28 @@ fun TripItem(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+
+@Composable
+fun DashboardScreen(
+    onTripClick: (Int) -> Unit
+) {
+    Scaffold { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "Dashboard Screen")
+            // TODO: Display list of trips and handle clicks calling onTripClick
         }
     }
 }
