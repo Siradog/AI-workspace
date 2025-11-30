@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 data class WeatherInfo(
@@ -98,6 +99,18 @@ class DashboardViewModel @Inject constructor(
             71, 73, 75 -> "Snow"
             95, 96, 99 -> "Thunderstorm"
             else -> "Unknown ($code)"
+        }
+    }
+
+    fun addTrip(title: String, destination: String, startDate: LocalDate, endDate: LocalDate) {
+        viewModelScope.launch {
+            val trip = Trip(
+                title = title,
+                destination = destination,
+                startDate = startDate,
+                endDate = endDate
+            )
+            tripDao.insertTrip(trip)
         }
     }
 }

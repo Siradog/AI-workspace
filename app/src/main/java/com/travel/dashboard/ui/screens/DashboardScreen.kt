@@ -4,6 +4,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
@@ -18,6 +29,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.travel.dashboard.data.local.entity.Trip
 import com.travel.dashboard.ui.viewmodel.DashboardViewModel
 import com.travel.dashboard.ui.viewmodel.WeatherInfo
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -26,6 +40,11 @@ fun DashboardScreen(
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var showAddTripDialog by remember { mutableStateOf(false) }
+
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = { showAddTripDialog = true }) {
 
     Scaffold(
         floatingActionButton = {
@@ -65,6 +84,121 @@ fun DashboardScreen(
                 trips = uiState.trips,
                 onTripClick = onTripClick
             )
+        }
+
+        if (showAddTripDialog) {
+            AddTripDialog(
+                onDismiss = { showAddTripDialog = false },
+                onSave = { title, destination, start, end ->
+                    viewModel.addTrip(title, destination, start, end)
+                    showAddTripDialog = false
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun AddTripDialog(
+    onDismiss: () -> Unit,
+    onSave: (String, String, LocalDate, LocalDate) -> Unit
+) {
+    var title by remember { mutableStateOf("") }
+    var destination by remember { mutableStateOf("") }
+    var startDateStr by remember { mutableStateOf("") }
+    var endDateStr by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE // yyyy-MM-dd
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Add New Trip",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Title") },
+                    singleLine = true
+                )
+
+                OutlinedTextField(
+                    value = destination,
+                    onValueChange = { destination = it },
+                    label = { Text("Destination") },
+                    singleLine = true
+                )
+
+                OutlinedTextField(
+                    value = startDateStr,
+                    onValueChange = { startDateStr = it },
+                    label = { Text("Start Date (yyyy-MM-dd)") },
+                    singleLine = true,
+                    placeholder = { Text("2024-01-01") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+
+                OutlinedTextField(
+                    value = endDateStr,
+                    onValueChange = { endDateStr = it },
+                    label = { Text("End Date (yyyy-MM-dd)") },
+                    singleLine = true,
+                    placeholder = { Text("2024-01-05") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+
+                if (error != null) {
+                    Text(
+                        text = error!!,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Cancel")
+                    }
+                    Button(onClick = {
+                        try {
+                            if (title.isBlank() || destination.isBlank() || startDateStr.isBlank() || endDateStr.isBlank()) {
+                                error = "All fields are required"
+                                return@Button
+                            }
+                            val start = LocalDate.parse(startDateStr, dateFormatter)
+                            val end = LocalDate.parse(endDateStr, dateFormatter)
+
+                            if (end.isBefore(start)) {
+                                error = "End date must be after start date"
+                                return@Button
+                            }
+
+                            onSave(title, destination, start, end)
+                        } catch (e: DateTimeParseException) {
+                            error = "Invalid date format. Use yyyy-MM-dd"
+                        }
+                    }) {
+                        Text("Save")
+                    }
+                }
+            }
         }
     }
 }
@@ -119,6 +253,9 @@ fun TripList(
 ) {
     if (trips.isEmpty()) {
         Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(32.dp),
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
