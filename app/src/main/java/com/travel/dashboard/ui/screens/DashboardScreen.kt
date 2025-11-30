@@ -210,6 +210,7 @@ fun WeatherCard(
     error: String?
 ) {
     Card(
+        modifier = Modifier.fillMaxWidth()
         modifier = Modifier
             .fillMaxWidth()
     ) {
@@ -254,6 +255,8 @@ fun TripList(
     if (trips.isEmpty()) {
         Box(
             modifier = Modifier
+                .fillMaxSize()
+                .padding(32.dp),
                 .fillMaxWidth()
                 .padding(32.dp),
             modifier = Modifier.fillMaxSize(),
@@ -285,6 +288,7 @@ fun TripItem(
             .clickable(onClick = onClick)
     ) {
         Column(
+            modifier = Modifier.padding(16.dp)
             modifier = Modifier
                 .padding(16.dp)
         ) {
