@@ -1,73 +1,68 @@
-# React + TypeScript + Vite
+# AI System Prompt Composer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AI（ChatGPT, Claudeなど）へのシステムプロンプトやカスタム指示を作成・管理するためのシングルページアプリケーションです。
+ブロック単位でプロンプトを構成し、並べ替えや編集が簡単に行えます。
 
-Currently, two official plugins are available:
+## 機能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **2ペイン構成**: 左側で編集、右側でリアルタイムプレビュー。
+- **ブロック管理**: プロンプトを「役割」「制約」「出力形式」などのブロックに分けて管理。
+- **並べ替え**: ドラッグ＆ドロップでブロックの順序を自由に変更可能。
+- **データ永続化**: 入力内容はブラウザに自動保存され、リロードしても消えません。
+- **コピー機能**: ワンクリックで全ブロックを結合したMarkdownテキストをコピーできます。
+- **ダークモード**: 目に優しいダークテーマを採用。
 
-## React Compiler
+## セットアップと実行方法
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+このアプリケーションは React + Vite で作成されています。以下の手順でローカル環境で実行できます。
 
-## Expanding the ESLint configuration
+### 前提条件
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js がインストールされていること
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 手順
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. 依存関係のインストール:
+   ```bash
+   npm install
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+2. 開発サーバーの起動:
+   ```bash
+   npm run dev
+   ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+3. ブラウザでアクセス:
+   ターミナルに表示されたURL（通常は `http://localhost:5173`）を開いてください。
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 使い方
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. **ブロックの追加**:
+   画面左下の「Add Block」ボタンをクリックして新しいブロックを追加します。
+
+2. **編集**:
+   - **タイトル**: ブロック上部の入力欄（例: Role, Constraints）。Markdownの見出し（`## Title`）として出力されます。
+   - **内容**: 下部のテキストエリアに指示内容を入力します。
+
+3. **並べ替え**:
+   ブロック左上のハンドル（点のアイコン）をドラッグして、順序を入れ替えます。
+
+4. **削除**:
+   ブロック右上のゴミ箱アイコンをクリックすると削除されます。
+
+5. **コピー**:
+   右側プレビュー画面右上の「Copy to Clipboard」ボタンをクリックすると、すべてのブロックが結合されたテキストがクリップボードにコピーされます。
+
+## 出力フォーマット
+
+各ブロックは以下のように結合されます：
+
+```markdown
+## [ブロックのタイトル]
+[ブロックの内容]
+
+---
+
+## [次のブロックのタイトル]
+...
 ```
